@@ -1,10 +1,10 @@
 <template>
-  <HomePanel title="新鲜好物" subTitle="新鲜出炉 品质靠谱">
+  <HomePanel title="新鲜好物" subTitle="新鲜出炉 品质靠谱" ref="target">
     <template v-slot:right>
       <XtxMore />
     </template>
     <template v-slot:default>
-      <ul class="goods-list">
+      <ul class="goods-list" v-if="news">
         <li v-for="item in news" :key="item.id">
           <RouterLink to="/">
             <img :src="item.picture" alt="" />
@@ -13,29 +13,39 @@
           </RouterLink>
         </li>
       </ul>
+      <Transition name="fade">
+        <!-- 骨架屏效果 -->
+        <HomeSkeleton v-if="news == null" />
+      </Transition>
     </template>
   </HomePanel>
 </template>
 <script>
 import HomePanel from "@/views/Home/components/HomePanel";
-import XtxMore from "@/components/library/XtxMore";
 import { getHomeNewApi } from "@/api/home";
-import { ref } from "vue";
+import useLazyData from "@/hooks/useLazyData";
+import HomeSkeleton from "@/views/Home/components/HomeSkeleton";
+// import { ref } from "vue";
 export default {
   name: "HomeNew",
-  components: { XtxMore, HomePanel },
+  components: { HomeSkeleton, HomePanel },
   setup() {
-    const news = useHomeNew();
-    return { news };
+    // const news = useHomeNew();
+    // return { news };
+    const { target, result } = useLazyData(getHomeNewApi);
+    return {
+      news: result,
+      target,
+    };
   },
 };
-function useHomeNew() {
-  const news = ref(null);
-  getHomeNewApi(4).then((data) => {
-    news.value = data.result;
-  });
-  return news;
-}
+// function useHomeNew() {
+//   const news = ref(null);
+//   getHomeNewApi(4).then((data) => {
+//     news.value = data.result;
+//   });
+//   return news;
+// }
 </script>
 <style scoped lang="less">
 .goods-list {

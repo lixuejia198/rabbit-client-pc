@@ -4,7 +4,7 @@
       v-if="banners"
       :carousels="banners"
       :autoPlay="true"
-      :duration="2000"
+      :duration="3000"
     />
   </div>
 </template>
