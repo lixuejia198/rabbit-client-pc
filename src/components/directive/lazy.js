@@ -1,6 +1,5 @@
-// 图片懒加载指令
 import defaultImg from "@/assets/images/default.png";
-
+// 图片懒加载指令
 const lazy = {
   // 指令所在元素挂载完成后
   mounted(el, binding) {

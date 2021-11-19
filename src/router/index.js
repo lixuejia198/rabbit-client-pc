@@ -5,6 +5,7 @@ const TopCategoryPage = () => import("@/views/Category/TopCategoryPage");
 const SubCategoryPage = () => import("@/views/Category/SubCategoryPage");
 
 const routes = [
+  // 首页
   {
     path: "/",
     component: homePage,
@@ -23,6 +24,9 @@ const routes = [
 
 const router = createRouter({
   history: createWebHashHistory(),
+  scrollBehavior() {
+    return { top: 0 };
+  },
   routes,
 });
 

@@ -1,6 +1,6 @@
 <template>
-  <!-- 新鲜好物和人气推荐的骨架屏 -->
   <div class="home-skeleton">
+    <!-- 新鲜好物和人气推荐的骨架屏 -->
     <div class="item" v-for="i in 4" :key="i" :style="{ backgroundColor: bg }">
       <XtxSkeleton
         bg="#e4e4e4"

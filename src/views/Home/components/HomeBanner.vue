@@ -9,8 +9,7 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
-import { getHomeBannerApi } from "@/api/home";
+import useBanners from "@/hooks/useBanners";
 
 export default {
   name: "HomeBanner",
@@ -19,16 +18,6 @@ export default {
     return { banners };
   },
 };
-function useBanners() {
-  // 用于存储轮播图数据
-  const banners = ref(null);
-  // 获取轮播图数据
-  getHomeBannerApi().then((data) => {
-    // 存储轮播图数据
-    banners.value = data.result;
-  });
-  return banners;
-}
 </script>
 <style scoped lang="less">
 .home-banner {

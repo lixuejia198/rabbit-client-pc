@@ -11,7 +11,9 @@
       @mouseleave="close(item.id)"
       @click="close(item.id)"
     >
-      <RouterLink :to="`/category/${item.id}`">{{ item.name }} </RouterLink>
+      <RouterLink :to="`/category/${item.id}`">
+        {{ item.name }}
+      </RouterLink>
       <!-- 二级分类 -->
       <div class="layer" :class="{ open: item.open }">
         <ul>

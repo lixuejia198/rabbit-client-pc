@@ -81,7 +81,7 @@ export default {
     // 开启自动轮播
     const startPlay = () => {
       // 判断调用者是否开启了自动轮播的功能 并且轮播图是否有数据(轮播图图片必须要大于1张)
-      if (props.autoPlay && props.carousels.length > 1) {
+      if (props.autoPlay && props.carousels?.length > 1) {
         // 开启定时器 自动轮播
         timer.value = setInterval(toggle, props.duration);
       }

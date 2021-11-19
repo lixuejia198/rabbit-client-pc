@@ -20,3 +20,7 @@ export function getHomeHotApi() {
 export function getHomeProductApi() {
   return requestWithoutToken("/home/goods", "get");
 }
+// 最新专题接口
+export function getHomeSpecialApi(limit = 3) {
+  return requestWithoutToken("/home/special", "get", { limit });
+}
