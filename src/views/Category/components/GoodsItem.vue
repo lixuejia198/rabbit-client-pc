@@ -10,7 +10,11 @@
 <script>
 export default {
   name: "GoodsItem",
-  props: ["goods"],
+  props: {
+    goods: {
+      type: Object,
+    },
+  },
 };
 </script>
 

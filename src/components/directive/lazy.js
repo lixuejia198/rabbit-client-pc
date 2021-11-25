@@ -6,7 +6,7 @@ const lazy = {
     // 创建元素监听对象
     const observer = new IntersectionObserver(([{ isIntersecting }]) => {
       /**
-       * useIntersectionObserver实例提供两个方法
+       * IntersectionObserver实例提供两个方法
        * observe(dom) 观察哪个dom
        * unobserve(dom) 停止观察哪个dom
        */

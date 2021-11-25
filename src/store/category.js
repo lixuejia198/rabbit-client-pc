@@ -28,6 +28,7 @@ export default {
     getCategories({ commit }) {
       // 获取分类列表数据
       getCategoriesApi().then((data) => {
+        // console.log(data, "data");
         data.result.forEach((item) => (item.open = false));
         commit("setCategories", data.result);
       });
