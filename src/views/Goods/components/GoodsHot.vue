@@ -11,7 +11,7 @@
 
 <script>
 import GoodsItem from "@/views/Category/components/GoodsItem";
-import { useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { ref } from "vue";
 import { getGoodsHotApi } from "@/api/goods";
 export default {
@@ -32,23 +32,28 @@ export default {
 function useHotGoods(type) {
   // 用于存储热销榜单数据
   const hotGoods = ref();
-  // 获取路由信息对象
-  const route = useRoute();
   // 热销榜单名称
   const titles = ref({
     1: "24小时热榜",
     2: "周榜",
     3: "总榜",
   });
+  // 获取路由信息对象
+  const route = useRoute();
   // 用于获取热销榜单数据的方法
-  const getData = () => {
+  const getData = (id) => {
     // 向服务器端发送请求 获取热销榜单数据
-    getGoodsHotApi({ id: route.params.id, type }).then((data) => {
+    getGoodsHotApi({ id, type }).then((data) => {
       // 存储热销榜单数据
       hotGoods.value = data.result;
     });
   };
-  getData();
+  // 初始调用获取热销商品数据
+  getData(route.params.id);
+  // 当路由更新时重新获取热销榜数据
+  onBeforeRouteUpdate((to) => {
+    getData(to.params.id);
+  });
   return { hotGoods, titles };
 }
 </script>

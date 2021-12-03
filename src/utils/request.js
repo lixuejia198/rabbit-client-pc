@@ -1,12 +1,18 @@
 // 1.创建一个新的axios实例 用于配置和小兔仙服务器端相关的请求配置
 // 2.配置基准的请求地址
-// 3.配置请求拦截器 看看本地舒服存在token 如果存在 将它放在请求头中
+// 3.配置请求拦截器 看看本地是否存在token 如果存在 将它放在请求头中
 
 import axios from "axios";
 import store from "@/store";
 import router from "@/router";
+
+// 线上环境: https://apipc-xiaotuxian-front.itheima.net/
+// 开发环境: http://pcapi-xiaotuxian-front-devtest.itheima.net/
+
 const baseURL = "http://pcapi-xiaotuxian-front-devtest.itheima.net/";
+// 发送携带token的请求
 const instanceWithToken = axios.create({ baseURL });
+// 发送普通请求 不携带token
 const instanceWithoutToken = axios.create({ baseURL });
 
 // 请求拦截器

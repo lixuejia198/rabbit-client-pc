@@ -74,7 +74,7 @@ import AppLayout from "@/components/AppLayout";
 import GoodsRelevant from "@/views/Goods/components/GoodsRelevant";
 import { getGoodsDetailApi } from "@/api/goods";
 import { provide, ref } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import GoodsImages from "@/views/Goods/components/GoodsImages";
 import GoodsSales from "@/views/Goods/components/GoodsSales";
 import GoodsInfo from "@/views/Goods/components/GoodsInfo";
@@ -96,12 +96,9 @@ export default {
     AppLayout,
   },
   setup() {
-    const { goodsDetail, getData } = useGoodsDetail();
-    // 获取路由信息对象
-    const route = useRoute();
+    const { goodsDetail } = useGoodsDetail();
     // 用于存储用户选择的商品数量
     const goodsCount = ref(1);
-    getData(route.params.id);
     // 当用户选择完整的规格以后 更新视图
     const onSpecChanged = (data) => {
       // console.log(data);
@@ -109,6 +106,7 @@ export default {
       goodsDetail.value.oldPrice = data.oldPrice;
       goodsDetail.value.inventory = data.inventory;
     };
+    // 将goodsDetail数据开放到子组件
     provide("goodsDetail", goodsDetail);
     return { goodsDetail, onSpecChanged, goodsCount };
   },
@@ -117,6 +115,8 @@ export default {
 function useGoodsDetail() {
   // 用于存储商品详细信息
   const goodsDetail = ref(null);
+  // 获取路由信息对象
+  const route = useRoute();
   // 用于获取商品详细信息的方法
   const getData = (id) => {
     // 向服务端发送请求获取商品详细信息
@@ -126,7 +126,13 @@ function useGoodsDetail() {
       goodsDetail.value = data.result;
     });
   };
-  return { goodsDetail, getData };
+  // 初始调用获取商品详情数据
+  getData(route.params.id);
+  // 当路由更新时 重新获取商品详情数据
+  onBeforeRouteUpdate((to) => {
+    getData(to.params.id);
+  });
+  return { goodsDetail };
 }
 </script>
 

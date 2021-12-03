@@ -25,3 +25,29 @@ export function getRelevantGoods({ id, limit = 16 }) {
 export function getGoodsHotApi({ id, limit = 3, type = 1 }) {
   return requestWithoutToken("/goods/hot", "get", { id, limit, type });
 }
+
+/***
+ * 获取商品评价头部信息
+ * @param id 商品id
+ * @returns {Promise}
+ */
+export function getCommentInfoApi(id) {
+  return requestWithoutToken(
+    `https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate`,
+    "get"
+  );
+}
+
+/***
+ * 获取评论列表数据
+ * @param id 商品id
+ * @param params 其他的查询参数
+ * @returns {Promise}
+ */
+export function getCommentListApi(params) {
+  return requestWithoutToken(
+    `https://mock.boxuegu.com/mock/1175/goods/${params.id}/evaluate/page`,
+    "get",
+    params
+  );
+}
