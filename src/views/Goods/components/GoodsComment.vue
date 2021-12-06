@@ -70,7 +70,7 @@
               v-for="i in 5 - item.score"
               :key="i + 'k'"
             ></i>
-            <span class="attr">颜色：黑色 尺码：M</span>
+            <span class="attr">{{ formatAttrs(item.orderInfo.specs) }}</span>
           </div>
           <div class="text">
             {{ item.content }}
@@ -86,6 +86,11 @@
         </div>
       </div>
     </div>
+    <XtxPagination
+      :pageSize="reqParams.pageSize"
+      :counts="counts"
+      v-model:page="reqParams.page"
+    />
   </div>
 </template>
 
@@ -100,8 +105,14 @@ export default {
   components: { GoodsCommentImage },
   setup() {
     const { commentInfo } = useCommentInfo();
-    const { commentList, formatNickname, updateReqParams, reqParams } =
-      useCommentList();
+    const {
+      commentList,
+      formatNickname,
+      formatAttrs,
+      updateReqParams,
+      reqParams,
+      counts,
+    } = useCommentList();
     // 默认是让全部评价标签选中
     const currentTagsTitle = ref("全部评价");
     return {
@@ -109,8 +120,10 @@ export default {
       currentTagsTitle,
       commentList,
       formatNickname,
+      formatAttrs,
       updateReqParams,
       reqParams,
+      counts,
     };
   },
 };
@@ -178,11 +191,17 @@ function useCommentList() {
       // 排序选项
       reqParams.value = { ...reqParams.value, ...target };
     }
+    // 当筛选条件发生变化时 将当前页码重置为1
+    reqParams.value.page = 1;
   };
+  // 总数据条数
+  const counts = ref(0);
   // 用于获取商品评论列表数据的方法
   const getData = () => {
     // 向服务器端发送请求 获取商品评论列表数据
     getCommentListApi(reqParams.value).then((data) => {
+      // 设置总数据条数
+      counts.value = data.result.counts;
       // 存储商品评论列表数据
       commentList.value = data.result;
     });
@@ -211,6 +230,7 @@ function useCommentList() {
     formatNickname,
     reqParams,
     updateReqParams,
+    counts,
   };
 }
 </script>

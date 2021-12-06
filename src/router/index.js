@@ -5,6 +5,7 @@ import homePage from "@/views/Home/homePage";
 const TopCategoryPage = () => import("@/views/Category/TopCategoryPage");
 const SubCategoryPage = () => import("@/views/Category/SubCategoryPage");
 const GoodsDetailPage = () => import("@/views/Goods/GoodsDetailPage");
+const LoginPage = () => import("@/views/Login/LoginPage");
 
 const routes = [
   // 首页
@@ -26,6 +27,11 @@ const routes = [
   {
     path: "/goods/:id",
     component: GoodsDetailPage,
+  },
+  // 登录
+  {
+    path: "/login",
+    component: LoginPage,
   },
 ];
 

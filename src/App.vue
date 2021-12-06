@@ -3,7 +3,6 @@
 </template>
 
 <script>
-// import { requestWithoutToken } from "@/utils/request";
 export default {
   name: "App",
   setup() {},
