@@ -1,4 +1,5 @@
 import lazy from "@/components/directive/lazy";
+import Message from "@/components/library/Message";
 // require.context 批量导入模块 第一个参数为目录 第二个参数为是否查找子目录 第三个参数为通过正则匹配文件
 // 方法的返回值是一个导入函数 通过这个导入函数导入组件
 const importFn = require.context("./", false, /\.vue$/);
@@ -8,6 +9,8 @@ const library = {
   install(app) {
     // 全局注册图片懒加载指令
     app.directive("lazy", lazy);
+    // 将 Message 方法添加到全局属性中
+    app.config.globalProperties.$message = Message;
     // 遍历文件路径
     keys.forEach((item) => {
       // 导入组件

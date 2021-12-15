@@ -81,7 +81,9 @@
                 placeholder="请输入验证码"
                 v-model="codeField"
               />
-              <span class="code">发送验证码</span>
+              <span class="code" @click="getMsgCode">
+                {{ isActive ? `剩余${count}秒` : "发送验证码" }}
+              </span>
             </div>
             <div class="error" v-if="codeError">
               <i class="iconfont icon-warning"></i>
@@ -106,10 +108,14 @@
       </template>
     </div>
     <div class="action">
-      <img
-        src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png"
-        alt=""
-      />
+      <a
+        href="https://graph.qq.com/oauth2.0/show?which=Login&display=pc&client_id=100556005&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fwww.corho.com%3A8080%2F%23%2Flogin%2Fcallback"
+      >
+        <img
+          src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png"
+          alt=""
+        />
+      </a>
       <div class="url">
         <a href="javascript:">忘记密码</a>
         <a href="javascript:">免费注册</a>
@@ -128,28 +134,67 @@ import {
   mobile,
   code,
 } from "@/utils/vee-validate-schema";
-
+import {
+  getLoginMsgCode,
+  loginByAccountAndPassword,
+  loginByMobileMsgCode,
+} from "@/api/user";
+import Message from "@/components/library/Message";
+import useCountDown from "@/hooks/useCountDown";
+import useLoginAfter from "@/hooks/useLoginAfter";
 export default {
   name: "LoginForm",
   setup() {
     // isMsgLogin用于实现使用账号登录和使用短信登录两个面板的切换 默认是使用账号登录
     const isMsgLogin = ref(false);
+    const { loginSuccess, loginFail } = useLoginAfter();
     // accountFormHandleSubmit：处理账号登录表单提交
     // accountFormValid 包含其他验证字段
     const { accountFormHandleSubmit, ...accountFormValid } =
       useAccountFormValidate();
     // 处理账号登录表单提交 当表单发生提交行为时 方法内部会做整体表单验证
     // 只有表单验证通过以后 指定的回调函数才会执行 回调函数的参数是用户在表单中输入的内容
-    const onAccountFormSubmit = accountFormHandleSubmit((value) => {
-      console.log(value);
-    });
-    // mobileFormHandleSubmit 处理短信登录表单提交
-    // mobileFormValid 包含其他验证字段
-    const { mobileFormHandleSubmit, ...mobileFormValid } =
+    const onAccountFormSubmit = accountFormHandleSubmit(
+      ({ account, password }) => {
+        // 发送请求进行用户名密码登录
+        loginByAccountAndPassword({ account, password })
+          // 登录成功
+          .then(loginSuccess)
+          // 登录失败
+          .catch(loginFail);
+      }
+    );
+    // mobileFormHandleSubmit 处理短信登录表单提交 mobileFormValid 包含其他验证字段
+    const { getMobileIsValidate, mobileFormHandleSubmit, ...mobileFormValid } =
       useMobileFormValidate();
-    // 处理短信登录表单提交
-    const onMobileFormSubmit = mobileFormHandleSubmit((value) => {
-      console.log(value);
+    const { count, start, isActive } = useCountDown();
+    // 获取验证码
+    const getMsgCode = async () => {
+      // 对手机号进行验证
+      let { isValid, mobile } = await getMobileIsValidate();
+      // 如果用户输入了手机号 并且定时器没有正在执行
+      if (isValid && !isActive.value) {
+        try {
+          // 发送请求获取手机验证码
+          await getLoginMsgCode(mobile);
+          // 验证码发动成功提示
+          Message({ type: "success", text: "验证码发送成功" });
+          // 验证码发送成功后开启定时器 进行倒计时
+          start(60);
+        } catch (error) {
+          // 验证码发送失败提示
+          Message({ type: "error", text: error.response.data.message });
+        }
+      }
+    };
+    // 处理手机号短信登录表单提交
+    const onMobileFormSubmit = mobileFormHandleSubmit(({ mobile, code }) => {
+      // 发送请求进行手机号短信登录
+      loginByMobileMsgCode({ mobile, code })
+        // 登录成功
+        .then(loginSuccess)
+        // 登录失败
+        .catch(loginFail);
     });
     return {
       isMsgLogin,
@@ -157,6 +202,9 @@ export default {
       ...accountFormValid,
       onMobileFormSubmit,
       ...mobileFormValid,
+      getMsgCode,
+      count,
+      isActive,
     };
   },
 };
@@ -202,12 +250,23 @@ function useMobileFormValidate() {
     },
   });
   // 验证手机号
-  const { value: mobileField, errorMessage: mobileError } = useField("mobile");
+  const {
+    value: mobileField,
+    errorMessage: mobileError,
+    validate: mobileValidate,
+  } = useField("mobile");
   // 验证验证码
   const { value: codeField, errorMessage: codeError } = useField("code");
   // 验证是否同意协议
   const { value: mobileIsAgreeField, errorMessage: mobileIsAgreeError } =
     useField("isAgree");
+  // 获取手机号是否验证通过
+  const getMobileIsValidate = async () => {
+    // 验证手机号 获取验证结果
+    let { valid } = await mobileValidate();
+    // 返回验证结果
+    return { isValid: valid, mobile: mobileField.value };
+  };
   return {
     mobileFormHandleSubmit,
     mobileField,
@@ -216,6 +275,7 @@ function useMobileFormValidate() {
     codeError,
     mobileIsAgreeField,
     mobileIsAgreeError,
+    getMobileIsValidate,
   };
 }
 </script>

@@ -1,11 +1,11 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import homePage from "@/views/Home/homePage";
-
 // 懒加载路由
 const TopCategoryPage = () => import("@/views/Category/TopCategoryPage");
 const SubCategoryPage = () => import("@/views/Category/SubCategoryPage");
 const GoodsDetailPage = () => import("@/views/Goods/GoodsDetailPage");
 const LoginPage = () => import("@/views/Login/LoginPage");
+const LoginCallbackPage = () => import("@/views/Login/LoginCallbackPage");
 
 const routes = [
   // 首页
@@ -32,6 +32,11 @@ const routes = [
   {
     path: "/login",
     component: LoginPage,
+  },
+  // 登录回调页
+  {
+    path: "/login/callback",
+    component: LoginCallbackPage,
   },
 ];
 

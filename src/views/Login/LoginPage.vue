@@ -28,20 +28,41 @@
     </div>
   </section>
   <LoginFooter />
+  <button @click="showMessage">showMessage</button>
+  <button @click="$message({ type: 'warn', text: '测试' })">button</button>
+  <button @click="show">button</button>
+  <button @click="test">button</button>
+  <button @click="test2(this)">button</button>
 </template>
 
 <script>
 import LoginHeader from "@/views/Login/components/LoginHeader";
 import LoginFooter from "@/views/Login/components/LoginFooter";
-import { ref } from "vue";
+import { getCurrentInstance, ref } from "vue";
 import LoginForm from "@/views/Login/components/LoginForm";
+import Message from "@/components/library/Message";
 export default {
   name: "LoginPage",
   components: { LoginForm, LoginFooter, LoginHeader },
   setup() {
     // activeName用于实现账户登录和扫码登录两个面板的切换 默认是账户登录
     const activeName = ref("account");
-    return { activeName };
+    const showMessage = () => {
+      Message({ type: "success", text: "登录成功" });
+    };
+    const { proxy } = getCurrentInstance();
+    const test = () => {
+      proxy.$message({ type: "success", text: "test" });
+    };
+    const test2 = (instance) => {
+      instance.$message({ type: "warn", text: "test2" });
+    };
+    return { activeName, showMessage, test, test2 };
+  },
+  methods: {
+    show() {
+      this.$message({ type: "error", text: "测试" });
+    },
   },
 };
 </script>

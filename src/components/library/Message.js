@@ -19,5 +19,10 @@ export default function Message({ type, text }) {
   render(vNode, container);
   // 4. 3秒后销毁组件
   clearTimeout(timer);
-  timer = setTimeout(() => render(null, container), 3000);
+  timer = setTimeout(() => {
+    // 销毁组件
+    vNode.component.proxy.show = false;
+    // 重置DOM对象 清除_vnode属性
+    container._vnode = null;
+  }, 3000);
 }
