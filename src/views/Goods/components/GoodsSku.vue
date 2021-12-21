@@ -169,7 +169,7 @@ function setDefaultSelected(skuId, skus, specs) {
   const target = skus
     .find((sku) => sku.id === skuId)
     .specs.map((spec) => spec.valueName);
-  console.log(target, "target");
+  // console.log(target, "target");
   // 循坏所有的规格选项
   specs.forEach((spec) => {
     spec.values.forEach((value) => {
@@ -191,6 +191,7 @@ function sendDataToParent(specs, skus, emit, pathMap) {
     const skuId = pathMap[selected.join("_")];
     // 根据skuId在所有可组合的规格集合中查找规格对象
     const target = skus.find((sku) => sku.id === skuId);
+    // console.log(target);
     // 将规格数据传递到父组件
     emit("onSpecChanged", {
       // 商品的规格id，将商品加入购物车时使用
@@ -201,7 +202,14 @@ function sendDataToParent(specs, skus, emit, pathMap) {
       oldPrice: target.oldPrice,
       // 商品的库存，在用户选择商品数量的时候使用
       inventory: target.inventory,
+      // 用户选择的规格名称字符串
+      attrsText: target.specs
+        .map((spec) => `${spec.name}：${spec.valueName}`)
+        .join(" "),
     });
+  } else {
+    // 当用户选择的不是一个完整的规格时,告诉父组件清除skuId
+    emit("onSpecHalfChanged");
   }
 }
 </script>

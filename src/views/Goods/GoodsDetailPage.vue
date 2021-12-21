@@ -30,6 +30,7 @@
               :specs="goodsDetail.specs"
               :skus="goodsDetail.skus"
               @onSpecChanged="onSpecChanged"
+              @onSpecHalfChanged="goodsDetail.currentSelectedSkuId = null"
             ></GoodsSku>
             <!-- 商品数量选择组件 -->
             <XtxNumberBox
@@ -38,7 +39,7 @@
               v-model="goodsCount"
             />
             <!-- 加入购物车 -->
-            <XtxButton type="primary" style="margin-top: 15px">
+            <XtxButton type="primary" style="margin-top: 15px" @click="addCart">
               加入购物车
             </XtxButton>
           </div>
@@ -82,6 +83,8 @@ import GoodsSku from "@/views/Goods/components/GoodsSku";
 import GoodsTab from "@/views/Goods/components/GoodsTab";
 import GoodsHot from "@/views/Goods/components/GoodsHot";
 import GoodsWarn from "@/views/Goods/components/GoodsWarn";
+import Message from "@/components/library/Message";
+import { useStore } from "vuex";
 export default {
   name: "GoodsDetailPage",
   components: {
@@ -96,19 +99,67 @@ export default {
     AppLayout,
   },
   setup() {
+    // 获取商品详细信息
     const { goodsDetail } = useGoodsDetail();
     // 用于存储用户选择的商品数量
     const goodsCount = ref(1);
+    // 获取store对象
+    const store = useStore();
     // 当用户选择完整的规格以后 更新视图
     const onSpecChanged = (data) => {
       // console.log(data);
       goodsDetail.value.price = data.price;
       goodsDetail.value.oldPrice = data.oldPrice;
       goodsDetail.value.inventory = data.inventory;
+      goodsDetail.value.currentSelectedSkuId = data.skuId;
+      goodsDetail.value.currentSelectedSkuText = data.attrsText;
     };
     // 将goodsDetail数据开放到子组件
     provide("goodsDetail", goodsDetail);
-    return { goodsDetail, onSpecChanged, goodsCount };
+    // 加入购物车
+    const addCart = () => {
+      // 1.判断用户是否选择了规格 如果用户没有选择规格的话 不能让他将商品加入购物车
+      if (!goodsDetail.value.currentSelectedSkuId) {
+        return Message({ type: "error", text: "请选择商品规格" });
+      }
+      // 2.收集商品信息
+      const goods = {
+        // 商品id
+        id: goodsDetail.value.id,
+        // 商品skuId
+        skuId: goodsDetail.value.currentSelectedSkuId,
+        // 商品名称
+        name: goodsDetail.value.name,
+        // 商品规格属性文字
+        attrsText: goodsDetail.value.currentSelectedSkuText,
+        // 商品图片
+        picture: goodsDetail.value.mainPictures[0],
+        // 商品原价
+        price: goodsDetail.value.oldPrice,
+        // 商品现价
+        nowPrice: goodsDetail.value.price,
+        // 是否选中
+        selected: true,
+        // 商品库存
+        stock: goodsDetail.value.inventory,
+        // 用户选择的商品数量
+        count: goodsCount.value,
+        // 如果用户选择了规格 该商品就一定是有效商品 因为能够选择的规格都是有库存的
+        isEffective: true,
+      };
+      // 3.将商品加入购物车
+      store
+        .dispatch("cart/addGoodsToCart", goods)
+        // 添加成功
+        .then(() => {
+          Message({ type: "success", text: "商品已经成功被添加到购物车中" });
+        })
+        // 添加失败
+        .catch((error) => {
+          Message({ type: "error", text: `${error.response.data.message}` });
+        });
+    };
+    return { goodsDetail, onSpecChanged, goodsCount, addCart };
   },
 };
 // 获取商品详细信息的方法

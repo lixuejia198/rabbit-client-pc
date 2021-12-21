@@ -42,6 +42,8 @@ export default {
     const logout = () => {
       // 清除用户信息
       store.commit("user/setUser", {});
+      // 清空本地购物车数据
+      store.commit("cart/setCart", []);
       // 跳转到登录页面
       router.push("/login");
     };

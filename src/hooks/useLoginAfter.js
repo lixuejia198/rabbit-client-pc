@@ -8,8 +8,8 @@ export default function useLoginAfter() {
   // 获取路由信息对象
   const router = useRouter();
   // 登录成功的回调处理函数
-  const loginSuccess = (data) => {
-    console.log(data);
+  const loginSuccess = async (data) => {
+    // console.log(data);
     // 1.存储用户信息
     store.commit("user/setUser", {
       // 用户id
@@ -29,6 +29,10 @@ export default function useLoginAfter() {
     router.push("/").catch();
     // 3.登录成功的提示
     Message({ type: "success", text: "登录成功" });
+    // 合并购物车
+    await store.dispatch("cart/mergeCart");
+    // 将服务器端购物车数据同步到本地
+    await store.dispatch("cart/updateCartList");
   };
   // 登录失败的回调处理函数
   const loginFail = () => {

@@ -1,11 +1,13 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import homePage from "@/views/Home/homePage";
+
 // 懒加载路由
 const TopCategoryPage = () => import("@/views/Category/TopCategoryPage");
 const SubCategoryPage = () => import("@/views/Category/SubCategoryPage");
 const GoodsDetailPage = () => import("@/views/Goods/GoodsDetailPage");
 const LoginPage = () => import("@/views/Login/LoginPage");
 const LoginCallbackPage = () => import("@/views/Login/LoginCallbackPage");
+const CartPage = () => import("@/views/Cart/CartPage");
 
 const routes = [
   // 首页
@@ -37,6 +39,11 @@ const routes = [
   {
     path: "/login/callback",
     component: LoginCallbackPage,
+  },
+  // 购物车页面
+  {
+    path: "/cart",
+    component: CartPage,
   },
 ];
 
