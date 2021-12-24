@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import homePage from "@/views/Home/homePage";
+import authGuard from "@/router/authGuard";
 
 // 懒加载路由
 const TopCategoryPage = () => import("@/views/Category/TopCategoryPage");
@@ -8,6 +9,9 @@ const GoodsDetailPage = () => import("@/views/Goods/GoodsDetailPage");
 const LoginPage = () => import("@/views/Login/LoginPage");
 const LoginCallbackPage = () => import("@/views/Login/LoginCallbackPage");
 const CartPage = () => import("@/views/Cart/CartPage");
+const CheckoutPage = () => import("@/views/Pay/CheckoutPage");
+const PayPage = () => import("@/views/Pay/PayPage");
+const PayResultPage = () => import("@/views/Pay/PayResultPage");
 
 const routes = [
   // 首页
@@ -45,6 +49,20 @@ const routes = [
     path: "/cart",
     component: CartPage,
   },
+  // 结算页面
+  {
+    path: "/checkout/order",
+    component: CheckoutPage,
+  },
+  // 支付页面
+  {
+    path: "/checkout/pay",
+    component: PayPage,
+  },
+  {
+    path: "/pay/callback",
+    component: PayResultPage,
+  },
 ];
 
 const router = createRouter({
@@ -54,5 +72,8 @@ const router = createRouter({
   },
   routes,
 });
+
+// 检测用户是否登录
+router.beforeEach(authGuard);
 
 export default router;

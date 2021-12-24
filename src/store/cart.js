@@ -109,7 +109,6 @@ export default {
         // 登录
         // 获取服务器端购物车列表数据
         let data = await getCartList();
-        console.log(data, "data");
         // 将服务器端购物车列表数据存储到vuex中
         commit("setCart", data.result);
       } else {
@@ -231,7 +230,6 @@ export default {
         selected: item.selected,
         count: item.count,
       }));
-      console.log(carts, "carts");
       try {
         // 合并购物车
         await mergeCart(carts);

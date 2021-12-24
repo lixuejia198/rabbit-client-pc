@@ -152,7 +152,9 @@
             {{ userSelectedGoodsCount }}
             件，商品合计：
             <span class="red">¥{{ userSelectedGoodsPrice }}</span>
-            <XtxButton type="primary">下单结算</XtxButton>
+            <XtxButton type="primary" @click="jumpToCheckout">
+              下单结算
+            </XtxButton>
           </div>
         </div>
         <!-- 猜你喜欢 -->
@@ -171,12 +173,19 @@ import Message from "@/components/library/Message";
 import EmptyCart from "@/views/Cart/components/EmptyCart";
 import Confirm from "@/components/library/Confirm";
 import CartSku from "@/views/Cart/components/CartSku";
+import { useRouter } from "vue-router";
 export default {
   name: "CartPage",
   components: { CartSku, EmptyCart, GoodsRelevant, AppLayout },
   setup() {
     // 获取store对象
     const store = useStore();
+    // 获取路由对象
+    const router = useRouter();
+    // 更新本地购物车商品信息
+    store.dispatch("cart/updateCartList").then(() => {
+      Message({ type: "success", text: "本地购物车中的商品信息更新成功" });
+    });
     // 获取有效商品列表
     const effectiveGoodsList = computed(
       () => store.getters["cart/effectiveGoodsList"]
@@ -197,10 +206,6 @@ export default {
     const userSelectedGoodsPrice = computed(
       () => store.getters["cart/userSelectedGoodsPrice"]
     );
-    // 更新本地购物车商品信息
-    store.dispatch("cart/updateCartList").then(() => {
-      Message({ type: "success", text: "本地购物车中的商品信息更新成功" });
-    });
     // 单选
     const selectGoods = (skuId, isSelected) => {
       // 根据skuId更新单个商品信息
@@ -255,8 +260,18 @@ export default {
     };
     // 更改购物车中的商品数量
     const changeGoodsCountOfCartBySkuId = (skuId, count) => {
-      console.log(skuId, count);
+      // console.log(skuId, count);
       store.dispatch("cart/updateGoodsOfCartBySkuId", { skuId, count });
+    };
+    // 下单结算按钮
+    const jumpToCheckout = () => {
+      // 判断用户是否选择了商品
+      if (userSelectedGoodsCount.value === 0) {
+        // 提示用户
+        return Message({ type: "error", text: "请至少选择一种商品" });
+      }
+      // 跳转到结算页面
+      router.push("/checkout/order");
     };
     return {
       effectiveGoodsList,
@@ -270,6 +285,7 @@ export default {
       deleteGoodsOfCartBySkuId,
       deleteGoodsOfCart,
       changeGoodsCountOfCartBySkuId,
+      jumpToCheckout,
     };
   },
 };
