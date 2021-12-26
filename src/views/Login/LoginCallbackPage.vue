@@ -29,7 +29,7 @@
       <LoginCallbackBindPhone :unionId="unionId" />
     </div>
     <div class="tab-content" v-if="!hasAccount">
-      <LoginCallbackBindPatch />
+      <LoginCallbackBindPatch :unionId="unionId" />
     </div>
   </section>
   <LoginFooter />

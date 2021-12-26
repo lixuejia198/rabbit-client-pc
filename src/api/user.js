@@ -62,3 +62,45 @@ export function bindMobileAndQQ({ unionId, mobile, code }) {
     code,
   });
 }
+
+/**
+ * 检测用户名是否唯一
+ * @param account 用户名
+ * @returns {Promise}
+ */
+export function checkUsernameIsUnique(account) {
+  return requestWithoutToken("/register/check", "get", { account });
+}
+
+/**
+ * 获取手机验证码
+ * @param mobile 手机号
+ * @returns {Promise}
+ */
+export function getRegisterMsgCode(mobile) {
+  return requestWithoutToken("/register/code", "get", { mobile });
+}
+
+/**
+ * 创建新账户并绑定QQ
+ * @param unionId QQ用户的唯一标识
+ * @param account 用户名
+ * @param mobile 手机号
+ * @param code 验证码
+ * @param password 密码
+ * @returns {Promise}
+ */
+export function createNewAccountBindQQ({
+  unionId,
+  account,
+  mobile,
+  code,
+  password,
+}) {
+  return requestWithoutToken(`/login.social/${unionId}/complement`, "post", {
+    account,
+    mobile,
+    code,
+    password,
+  });
+}

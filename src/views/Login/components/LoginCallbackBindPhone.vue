@@ -46,6 +46,7 @@ import useLoginAfter from "@/hooks/useLoginAfter";
 
 export default {
   name: "LoginCallbackBindPhone",
+  props: ["unionId"],
   setup(props) {
     // 获取QQ用户昵称和头像
     const { nickname, avatar } = useQQUserInfo();
