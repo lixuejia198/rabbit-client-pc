@@ -12,6 +12,10 @@ const CartPage = () => import("@/views/Cart/CartPage");
 const CheckoutPage = () => import("@/views/Pay/CheckoutPage");
 const PayPage = () => import("@/views/Pay/PayPage");
 const PayResultPage = () => import("@/views/Pay/PayResultPage");
+const MemberHomePage = () => import("@/views/Member/home/MemberHomePage");
+const OrderListPage = () => import("@/views/Member/order/OrderListPage");
+const OrderDetailPage = () => import("@/views/Member/order/OrderDetailPage");
+const OrderView = () => import("@/views/Member/order/OrderView");
 
 const routes = [
   // 首页
@@ -59,9 +63,31 @@ const routes = [
     path: "/checkout/pay",
     component: PayPage,
   },
+  // 支付结果页面
   {
     path: "/pay/callback",
     component: PayResultPage,
+  },
+  // 个人中心页面
+  {
+    path: "/member/home",
+    component: MemberHomePage,
+  },
+  {
+    path: "/member/order",
+    component: OrderView,
+    children: [
+      // 订单列表页面
+      {
+        path: "",
+        component: OrderListPage,
+      },
+      // 订单详情页面
+      {
+        path: ":id",
+        component: OrderDetailPage,
+      },
+    ],
   },
 ];
 
@@ -71,6 +97,8 @@ const router = createRouter({
     return { top: 0 };
   },
   routes,
+  linkActiveClass: "fuzzy-active",
+  linkExactActiveClass: "exact-active",
 });
 
 // 检测用户是否登录
